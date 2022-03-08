@@ -2,6 +2,7 @@
 import { setAssetPath } from "@esri/calcite-components/dist/components";
 setAssetPath("https://js.arcgis.com/calcite-components/1.0.0-beta.77/assets");
 
+import "@esri/calcite-components/dist/components/calcite-button";
 import "@esri/calcite-components/dist/components/calcite-dropdown";
 import "@esri/calcite-components/dist/components/calcite-dropdown-group";
 import "@esri/calcite-components/dist/components/calcite-dropdown-item";
