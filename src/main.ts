@@ -1,10 +1,12 @@
 import './style.css'
 
-import ArcGISMap from "@arcgis/core/Map";
-import MapView from "@arcgis/core/views/MapView";
+import WebMap from "@arcgis/core/WebMap";
+import SceneView from "@arcgis/core/views/SceneView";
+import FloorFilter from "@arcgis/core/widgets/FloorFilter";
+import Portal from "@arcgis/core/portal/Portal"
 import * as intl from "@arcgis/core/intl";
-
-import DropdownWidget from './widget';
+import esriConfig from "@arcgis/core/config";
+import FeatureLayer from "@arcgis/core/layers/FeatureLayer"
 
 /*
 * Messages are for rendering strings within the widget.
@@ -29,21 +31,63 @@ const loader = {
 
 intl.registerMessageBundleLoader(loader);
 
-const map = new ArcGISMap({
-  basemap: "streets-vector"
+
+const PORTAL_URL = "https://dev0018792.esri.com/portal"
+
+const arcgisPortal =  new Portal({
+  authMode: "immediate",
+  url: "https://www.arcgis.com/" // First instance
 });
 
-const view = new MapView({
-  map: map,
-  container: "viewDiv",
-  center: [-118.244, 34.052],
-  zoom: 12 
-});
+arcgisPortal.load().then(() => {
+  const webmap = new WebMap({
+    portalItem: {
+      id: "f133a698536f44c8884ad81f80b6cfc7"
+    }
+  });
 
-view.when(() => {
-  console.log("Map is loaded");
+  const missionPortal = new Portal({
+    authMode: "immediate",
+    url: PORTAL_URL
+  });
 
-  // Initialize the custom widget and set its properties using the constructor
-  const dropdownWidget = new DropdownWidget();
-  view.ui.add(dropdownWidget, "top-right");  
-});
+  missionPortal.load().then(() => {
+    const view = new SceneView({
+      container: "viewDiv",
+      map: webmap
+    });
+  
+    esriConfig.portalUrl = PORTAL_URL
+
+    FeatureLayer
+    // const tracksFeatureLayer = new FeatureLayer({
+    //   url: "https://dev0018792.esri.com/portal/home/item.html?id=035b03a8151649c8befe57c4be08df84"
+    // })
+    // webmap.layers.add(tracksFeatureLayer);
+
+
+    const queryParameters = {
+      query: "username:tresh_idt"
+    };
+ 
+    missionPortal.queryUsers(queryParameters).then((queryResults) => {
+      queryResults.results[0].fetchItems().then((fetchItemResult: any) => {
+        console.log("next start index: ", fetchItemResult.nextStart);
+        fetchItemResult.items.forEach((item: any) => {
+          console.log("portal item title:", item.title);
+        });
+     });
+    });
+    
+    view.when(() => {
+      const floorFilter = new FloorFilter({
+        view: view
+      });
+      view.ui.add(floorFilter, "top-trailing");
+    });
+  })
+})
+
+
+
+
