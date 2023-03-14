@@ -59,25 +59,11 @@ arcgisPortal.load().then(() => {
   
     esriConfig.portalUrl = PORTAL_URL
 
-    FeatureLayer
-    // const tracksFeatureLayer = new FeatureLayer({
-    //   url: "https://dev0018792.esri.com/portal/home/item.html?id=035b03a8151649c8befe57c4be08df84"
-    // })
-    // webmap.layers.add(tracksFeatureLayer);
+    const tracksFeatureLayer = new FeatureLayer({
+      url: "https://dev0018943.esri.com/server/rest/services/Hosted/tracks_69432d259cfb4724ace36d5262ae32b7/FeatureServer"
+    })
+    webmap.layers.add(tracksFeatureLayer);
 
-
-    const queryParameters = {
-      query: "username:tresh_idt"
-    };
- 
-    missionPortal.queryUsers(queryParameters).then((queryResults) => {
-      queryResults.results[0].fetchItems().then((fetchItemResult: any) => {
-        console.log("next start index: ", fetchItemResult.nextStart);
-        fetchItemResult.items.forEach((item: any) => {
-          console.log("portal item title:", item.title);
-        });
-     });
-    });
     
     view.when(() => {
       const floorFilter = new FloorFilter({
