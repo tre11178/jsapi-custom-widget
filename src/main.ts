@@ -2,11 +2,14 @@ import './style.css'
 
 import WebMap from "@arcgis/core/WebMap";
 import SceneView from "@arcgis/core/views/SceneView";
+// import MapView from "@arcgis/core/views/MapView";
+
 import FloorFilter from "@arcgis/core/widgets/FloorFilter";
 import Portal from "@arcgis/core/portal/Portal"
 import * as intl from "@arcgis/core/intl";
 import esriConfig from "@arcgis/core/config";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer"
+import LayerFloorInfo from "@arcgis/core/layers/support/LayerFloorInfo.js";
 
 /*
 * Messages are for rendering strings within the widget.
@@ -62,9 +65,11 @@ arcgisPortal.load().then(() => {
     const tracksFeatureLayer = new FeatureLayer({
       url: "https://dev0018943.esri.com/server/rest/services/Hosted/tracks_69432d259cfb4724ace36d5262ae32b7/FeatureServer"
     })
+    const floorInfo = new LayerFloorInfo({
+      floorField: "level_id"
+    });
+    tracksFeatureLayer.floorInfo = floorInfo;
     webmap.layers.add(tracksFeatureLayer);
-
-    
     view.when(() => {
       const floorFilter = new FloorFilter({
         view: view
