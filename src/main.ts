@@ -1,8 +1,8 @@
 import './style.css'
 
 import WebMap from "@arcgis/core/WebMap";
-import SceneView from "@arcgis/core/views/SceneView";
-// import MapView from "@arcgis/core/views/MapView";
+// import SceneView from "@arcgis/core/views/SceneView";
+import MapView from "@arcgis/core/views/MapView";
 
 import FloorFilter from "@arcgis/core/widgets/FloorFilter";
 import Portal from "@arcgis/core/portal/Portal"
@@ -55,7 +55,7 @@ arcgisPortal.load().then(() => {
   });
 
   missionPortal.load().then(() => {
-    const view = new SceneView({
+    const view = new MapView({
       container: "viewDiv",
       map: webmap
     });
@@ -67,9 +67,13 @@ arcgisPortal.load().then(() => {
     })
     const floorInfo = new LayerFloorInfo({
       floorField: "level_id"
-    });
+    })
     tracksFeatureLayer.floorInfo = floorInfo;
-    webmap.layers.add(tracksFeatureLayer);
+    //make sure that the layer loads before adding it to the webmap
+    //otherwise the features may not appear
+    tracksFeatureLayer.load().then(() => {
+      webmap.layers.add(tracksFeatureLayer);
+    })
     view.when(() => {
       const floorFilter = new FloorFilter({
         view: view
